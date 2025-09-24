@@ -504,16 +504,40 @@ function createSimpleModal(data, modalId) {
 function createHistogramChart(data, chartId) {
     const ctx = document.getElementById('histogramChart').getContext('2d');
     
-    // Create color mapping based on time ranges (green = fast, yellow = medium, red = slow)
-    const labels = Object.keys(data);
-    const backgroundColor = labels.map(label => {
-        const range = label.toLowerCase();
-        if (range.includes('0-1') || range.includes('0-3') || range.includes('same day')) {
-            return 'rgba(40, 167, 69, 0.8)'; // green
-        } else if (range.includes('1-3') || range.includes('3-7') || range.includes('1-7')) {
-            return 'rgba(255, 193, 7, 0.8)'; // yellow
+    // Convert data to array of objects and sort from fastest to slowest
+    const dataEntries = Object.entries(data).map(([label, value]) => ({
+        label: label,
+        value: value,
+        sortOrder: getSortOrder(label)
+    }));
+    
+    // Sort by sortOrder (fastest to slowest)
+    dataEntries.sort((a, b) => a.sortOrder - b.sortOrder);
+    
+    // Extract sorted labels and values
+    const sortedLabels = dataEntries.map(entry => entry.label);
+    const sortedValues = dataEntries.map(entry => entry.value);
+    
+    // Create color mapping based on position (left=green, middle=yellow, right=red)
+    const numBars = sortedLabels.length;
+    const backgroundColor = sortedLabels.map((_, index) => {
+        if (numBars <= 2) {
+            // For 1-2 bars, use green and red
+            return index === 0 ? 'rgba(40, 167, 69, 0.8)' : 'rgba(220, 53, 69, 0.8)';
+        } else if (numBars === 3) {
+            // For 3 bars: green, yellow, red
+            const colors = ['rgba(40, 167, 69, 0.8)', 'rgba(255, 193, 7, 0.8)', 'rgba(220, 53, 69, 0.8)'];
+            return colors[index];
         } else {
-            return 'rgba(220, 53, 69, 0.8)'; // red
+            // For more bars, distribute colors
+            const third = Math.floor(numBars / 3);
+            if (index < third) {
+                return 'rgba(40, 167, 69, 0.8)'; // green
+            } else if (index < third * 2) {
+                return 'rgba(255, 193, 7, 0.8)'; // yellow
+            } else {
+                return 'rgba(220, 53, 69, 0.8)'; // red
+            }
         }
     });
     
@@ -522,9 +546,9 @@ function createHistogramChart(data, chartId) {
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: labels,
+            labels: sortedLabels,
             datasets: [{
-                data: Object.values(data),
+                data: sortedValues,
                 backgroundColor: backgroundColor,
                 borderColor: borderColor,
                 borderWidth: 1
@@ -556,6 +580,27 @@ function createHistogramChart(data, chartId) {
             }
         }
     });
+}
+
+function getSortOrder(label) {
+    const range = label.toLowerCase();
+    
+    // Define sort order for common time ranges (lower number = faster = leftmost)
+    if (range.includes('same day') || range.includes('0-1')) return 1;
+    if (range.includes('0-3') || range.includes('1-3')) return 2;
+    if (range.includes('3-7') || range.includes('1-7')) return 3;
+    if (range.includes('7-14') || range.includes('1-2 week')) return 4;
+    if (range.includes('14-30') || range.includes('2-4 week')) return 5;
+    if (range.includes('30+') || range.includes('1+ month')) return 6;
+    
+    // For any other labels, try to extract numbers and sort by them
+    const numbers = range.match(/\d+/g);
+    if (numbers) {
+        return parseInt(numbers[0]) + 10; // Offset to put after known ranges
+    }
+    
+    // Default sort order for unrecognized labels
+    return 100;
 }
 
 function createContributorsChart(data) {
