@@ -1,0 +1,230 @@
+/* Custom CSS for GitHub Health Dashboard */
+
+:root {
+    --color-good: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-good-light: #d4edda;
+    --color-warning-light: #fff3cd;
+    --color-danger-light: #f8d7da;
+}
+
+body {
+    background-color: #f8f9fa;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.25rem;
+}
+
+.section-title {
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Metric Cards */
+.metric-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border: 3px solid transparent;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.metric-card.good {
+    border-color: var(--color-good);
+    background: linear-gradient(135deg, var(--color-good-light), white);
+}
+
+.metric-card.warning {
+    border-color: var(--color-warning);
+    background: linear-gradient(135deg, var(--color-warning-light), white);
+}
+
+.metric-card.danger {
+    border-color: var(--color-danger);
+    background: linear-gradient(135deg, var(--color-danger-light), white);
+}
+
+.metric-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+}
+
+.metric-card.good .metric-icon {
+    color: var(--color-good);
+}
+
+.metric-card.warning .metric-icon {
+    color: var(--color-warning);
+}
+
+.metric-card.danger .metric-icon {
+    color: var(--color-danger);
+}
+
+.metric-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #212529;
+}
+
+/* Home page styling */
+.card {
+    border: none;
+    border-radius: 16px;
+}
+
+.form-control-lg {
+    border-radius: 8px;
+    border: 2px solid #dee2e6;
+    padding: 0.75rem 1rem;
+}
+
+.form-control-lg:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+.btn-lg {
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
+}
+
+/* Loading indicator */
+#loadingIndicator {
+    background: white;
+    border-radius: 16px;
+    padding: 3rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.5rem;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Table styling for health files */
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: rgba(0, 0, 0, 0.02);
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+/* Chart containers */
+canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .metric-card {
+        padding: 1rem;
+    }
+    
+    .metric-value {
+        font-size: 1.25rem;
+    }
+    
+    .metric-icon {
+        font-size: 1.5rem;
+    }
+    
+    .section-title {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    
+    .metric-card {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Alert styling */
+.alert {
+    border-radius: 8px;
+    border: none;
+}
+
+.alert-danger {
+    background-color: var(--color-danger-light);
+    color: #721c24;
+}
+
+.alert-success {
+    background-color: var(--color-good-light);
+    color: #155724;
+}
+
+.alert-warning {
+    background-color: var(--color-warning-light);
+    color: #856404;
+}
+
+/* Error container */
+#errorContainer {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Utility classes */
+.text-good {
+    color: var(--color-good) !important;
+}
+
+.text-warning {
+    color: var(--color-warning) !important;
+}
+
+.text-danger {
+    color: var(--color-danger) !important;
+}

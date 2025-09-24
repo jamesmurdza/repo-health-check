@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}GitHub Repository Health Dashboard{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body text-center">
+                <div class="mb-4">
+                    <i class="fab fa-github display-1 text-primary mb-3"></i>
+                    <h1 class="card-title">GitHub Health Dashboard</h1>
+                    <p class="card-text text-muted">Analyze the health and activity of any GitHub repository</p>
+                </div>
+                
+                <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm">
+                    <div class="mb-3">
+                        <label for="repo_url" class="form-label">GitHub Repository URL</label>
+                        <input 
+                            type="text" 
+                            class="form-control form-control-lg" 
+                            id="repo_url" 
+                            name="repo_url" 
+                            placeholder="https://github.com/owner/repository"
+                            required
+                        >
+                        <div class="form-text">Enter the full GitHub repository URL or just owner/repository</div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary btn-lg px-5">
+                        <i class="fas fa-chart-line me-2"></i>Analyze Repository
+                    </button>
+                </form>
+                
+                <div class="mt-4">
+                    <h5 class="mb-3">What we analyze:</h5>
+                    <div class="row text-start">
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-clock text-warning me-2"></i>
+                                <small>Responsiveness</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-chart-bar text-success me-2"></i>
+                                <small>Activity</small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="d-flex align-items-center mb-2">
+                                <i class="fas fa-users text-info me-2"></i>
+                                <small>Community</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

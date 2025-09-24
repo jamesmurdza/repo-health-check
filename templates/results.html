@@ -1,0 +1,480 @@
+{% extends "base.html" %}
+
+{% block title %}{{ owner }}/{{ repo }} - Health Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="mb-0">
+            <i class="fab fa-github me-2"></i>
+            <span id="repoName">{{ owner }}/{{ repo }}</span>
+        </h1>
+        <p class="text-muted mb-0">Repository Health Analysis</p>
+    </div>
+    <a href="{{ url_for('home') }}" class="btn btn-outline-primary">
+        <i class="fas fa-plus me-2"></i>Analyze Another
+    </a>
+</div>
+
+<!-- Loading Indicator -->
+<div id="loadingIndicator" class="text-center py-5">
+    <div class="spinner-border text-primary mb-3" style="width: 3rem; height: 3rem;" role="status">
+        <span class="visually-hidden">Loading...</span>
+    </div>
+    <h4>Analyzing Repository Health...</h4>
+    <p class="text-muted">This may take a few moments while we gather data from the GitHub API</p>
+</div>
+
+<!-- Results Container -->
+<div id="resultsContainer" style="display: none;">
+    <!-- Responsiveness Section -->
+    <section class="mb-5">
+        <h2 class="section-title">
+            <i class="fas fa-clock text-warning me-2"></i>Responsiveness
+        </h2>
+        <div class="row g-3" id="responsivenessMetrics">
+            <!-- Metrics will be populated here -->
+        </div>
+    </section>
+
+    <!-- Activity Section -->
+    <section class="mb-5">
+        <h2 class="section-title">
+            <i class="fas fa-chart-bar text-success me-2"></i>Activity
+        </h2>
+        <div class="row g-3" id="activityMetrics">
+            <!-- Metrics will be populated here -->
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="mb-5">
+        <h2 class="section-title">
+            <i class="fas fa-users text-info me-2"></i>Community
+        </h2>
+        <div class="row g-3" id="communityMetrics">
+            <!-- Metrics will be populated here -->
+        </div>
+    </section>
+</div>
+
+<!-- Error Container -->
+<div id="errorContainer" style="display: none;" class="alert alert-danger">
+    <h4 class="alert-heading">
+        <i class="fas fa-exclamation-triangle me-2"></i>Analysis Failed
+    </h4>
+    <p id="errorMessage"></p>
+    <hr>
+    <p class="mb-0">
+        <a href="{{ url_for('home') }}" class="btn btn-outline-danger">Try Another Repository</a>
+    </p>
+</div>
+
+<!-- Metric Detail Modals -->
+<div class="modal fade" id="metricModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated here -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+const owner = '{{ owner }}';
+const repo = '{{ repo }}';
+
+// Load metrics on page load
+document.addEventListener('DOMContentLoaded', function() {
+    loadMetrics();
+});
+
+async function loadMetrics() {
+    try {
+        const response = await fetch(`/api/analyze/${owner}/${repo}`);
+        const data = await response.json();
+        
+        if (response.ok) {
+            displayMetrics(data);
+            document.getElementById('loadingIndicator').style.display = 'none';
+            document.getElementById('resultsContainer').style.display = 'block';
+        } else {
+            throw new Error(data.error || 'Failed to analyze repository');
+        }
+    } catch (error) {
+        console.error('Error loading metrics:', error);
+        document.getElementById('loadingIndicator').style.display = 'none';
+        document.getElementById('errorContainer').style.display = 'block';
+        document.getElementById('errorMessage').textContent = error.message;
+    }
+}
+
+function displayMetrics(data) {
+    // Display responsiveness metrics
+    displayResponsivenessMetrics(data.responsiveness);
+    
+    // Display activity metrics
+    displayActivityMetrics(data.activity);
+    
+    // Display community metrics
+    displayCommunityMetrics(data.community);
+}
+
+function displayResponsivenessMetrics(metrics) {
+    const container = document.getElementById('responsivenessMetrics');
+    
+    const metricCards = [
+        {
+            title: 'Median Issue Close Time',
+            value: `${Math.round(metrics.median_issue_close_time)} days`,
+            icon: 'fas fa-bug',
+            classification: getTimeClassification(metrics.median_issue_close_time),
+            modalId: 'issueCloseTime',
+            modalData: metrics.issue_close_times_distribution
+        },
+        {
+            title: 'Median PR Merge Time',
+            value: `${Math.round(metrics.median_pr_merge_time)} days`,
+            icon: 'fas fa-code-branch',
+            classification: getTimeClassification(metrics.median_pr_merge_time),
+            modalId: 'prMergeTime',
+            modalData: metrics.pr_merge_times_distribution
+        },
+        {
+            title: 'Stale Issues/PRs',
+            value: metrics.stale_items.toString(),
+            icon: 'fas fa-clock',
+            classification: getStaleClassification(metrics.stale_items),
+            modalId: 'staleItems',
+            modalData: { count: metrics.stale_items }
+        }
+    ];
+    
+    container.innerHTML = metricCards.map(createMetricCard).join('');
+}
+
+function displayActivityMetrics(metrics) {
+    const container = document.getElementById('activityMetrics');
+    
+    const metricCards = [
+        {
+            title: 'Commits (30 days)',
+            value: metrics.commits_last_30_days.toString(),
+            icon: 'fas fa-code',
+            classification: getCommitsClassification(metrics.commits_last_30_days),
+            modalId: 'commits',
+            modalData: { count: metrics.commits_last_30_days }
+        },
+        {
+            title: 'Active Contributors',
+            value: metrics.active_contributors.toString(),
+            icon: 'fas fa-user-friends',
+            classification: getContributorsClassification(metrics.active_contributors),
+            modalId: 'contributors',
+            modalData: metrics.top_contributors
+        },
+        {
+            title: 'Issue Close Rate',
+            value: `${metrics.issue_close_rate}%`,
+            icon: 'fas fa-check-circle',
+            classification: getRateClassification(metrics.issue_close_rate),
+            modalId: 'issueRate',
+            modalData: { rate: metrics.issue_close_rate }
+        },
+        {
+            title: 'PR Merge Rate',
+            value: `${metrics.pr_merge_rate}%`,
+            icon: 'fas fa-check-double',
+            classification: getRateClassification(metrics.pr_merge_rate),
+            modalId: 'prRate',
+            modalData: { rate: metrics.pr_merge_rate }
+        }
+    ];
+    
+    container.innerHTML = metricCards.map(createMetricCard).join('');
+}
+
+function displayCommunityMetrics(metrics) {
+    const container = document.getElementById('communityMetrics');
+    
+    const metricCards = [
+        {
+            title: 'GitHub Health Score',
+            value: `${metrics.health_score}%`,
+            icon: 'fas fa-heart',
+            classification: getRateClassification(metrics.health_score),
+            modalId: 'healthScore',
+            modalData: metrics.health_files
+        },
+        {
+            title: 'New Contributors',
+            value: metrics.new_contributors.toString(),
+            icon: 'fas fa-user-plus',
+            classification: getContributorsClassification(metrics.new_contributors),
+            modalId: 'newContributors',
+            modalData: { count: metrics.new_contributors }
+        },
+        {
+            title: 'Good First Issues',
+            value: metrics.good_first_issues.toString(),
+            icon: 'fas fa-seedling',
+            classification: getFirstIssuesClassification(metrics.good_first_issues),
+            modalId: 'firstIssues',
+            modalData: { count: metrics.good_first_issues }
+        },
+        {
+            title: 'External Contributions',
+            value: `${metrics.external_contribution_pct}%`,
+            icon: 'fas fa-external-link-alt',
+            classification: getRateClassification(metrics.external_contribution_pct),
+            modalId: 'externalContrib',
+            modalData: { rate: metrics.external_contribution_pct }
+        }
+    ];
+    
+    container.innerHTML = metricCards.map(createMetricCard).join('');
+}
+
+function createMetricCard(metric) {
+    return `
+        <div class="col-lg-3 col-md-4 col-sm-6">
+            <div class="metric-card ${metric.classification}" onclick="showModal('${metric.modalId}', '${metric.title}', ${JSON.stringify(metric.modalData).replace(/"/g, '&quot;')})">
+                <div class="metric-icon">
+                    <i class="${metric.icon}"></i>
+                </div>
+                <div class="metric-content">
+                    <h5 class="metric-title">${metric.title}</h5>
+                    <div class="metric-value">${metric.value}</div>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Classification functions
+function getTimeClassification(days) {
+    if (days <= 3) return 'good';
+    if (days <= 7) return 'warning';
+    return 'danger';
+}
+
+function getStaleClassification(count) {
+    if (count <= 5) return 'good';
+    if (count <= 15) return 'warning';
+    return 'danger';
+}
+
+function getCommitsClassification(count) {
+    if (count >= 20) return 'good';
+    if (count >= 5) return 'warning';
+    return 'danger';
+}
+
+function getContributorsClassification(count) {
+    if (count >= 5) return 'good';
+    if (count >= 2) return 'warning';
+    return 'danger';
+}
+
+function getRateClassification(rate) {
+    if (rate >= 80) return 'good';
+    if (rate >= 60) return 'warning';
+    return 'danger';
+}
+
+function getFirstIssuesClassification(count) {
+    if (count >= 5) return 'good';
+    if (count >= 1) return 'warning';
+    return 'danger';
+}
+
+function showModal(modalId, title, data) {
+    document.getElementById('modalTitle').textContent = title;
+    
+    let modalContent = '';
+    
+    switch (modalId) {
+        case 'issueCloseTime':
+        case 'prMergeTime':
+            modalContent = createHistogramModal(data, modalId.includes('issue') ? 'Issue Close Times' : 'PR Merge Times');
+            break;
+        case 'contributors':
+            modalContent = createContributorsModal(data);
+            break;
+        case 'healthScore':
+            modalContent = createHealthFilesModal(data);
+            break;
+        default:
+            modalContent = createSimpleModal(data);
+    }
+    
+    document.getElementById('modalBody').innerHTML = modalContent;
+    new bootstrap.Modal(document.getElementById('metricModal')).show();
+    
+    // Initialize charts if needed
+    if (modalId === 'issueCloseTime' || modalId === 'prMergeTime') {
+        setTimeout(() => createHistogramChart(data, modalId), 100);
+    } else if (modalId === 'contributors') {
+        setTimeout(() => createContributorsChart(data), 100);
+    }
+}
+
+function createHistogramModal(data, title) {
+    return `
+        <div class="mb-3">
+            <p>Distribution of ${title.toLowerCase()} across recent items:</p>
+        </div>
+        <div style="height: 300px;">
+            <canvas id="histogramChart"></canvas>
+        </div>
+        <div class="mt-3">
+            <small class="text-muted">Based on the most recent 100 closed items</small>
+        </div>
+    `;
+}
+
+function createContributorsModal(data) {
+    if (!data || data.length === 0) {
+        return '<p>No contributor data available.</p>';
+    }
+    
+    return `
+        <div class="mb-3">
+            <p>Top contributors by commit count:</p>
+        </div>
+        <div style="height: 300px;">
+            <canvas id="contributorsChart"></canvas>
+        </div>
+    `;
+}
+
+function createHealthFilesModal(data) {
+    if (!data || data.length === 0) {
+        return '<p>No health file information available.</p>';
+    }
+    
+    const table = data.map(file => `
+        <tr>
+            <td>
+                <i class="fas fa-${file.present ? 'check text-success' : 'times text-danger'} me-2"></i>
+                ${file.name}
+            </td>
+            <td>
+                <span class="badge ${file.present ? 'bg-success' : 'bg-danger'}">
+                    ${file.present ? 'Present' : 'Missing'}
+                </span>
+            </td>
+        </tr>
+    `).join('');
+    
+    return `
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>File</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${table}
+                </tbody>
+            </table>
+        </div>
+    `;
+}
+
+function createSimpleModal(data) {
+    return `
+        <div class="text-center">
+            <p>Additional details for this metric:</p>
+            <pre class="text-start">${JSON.stringify(data, null, 2)}</pre>
+        </div>
+    `;
+}
+
+function createHistogramChart(data, chartId) {
+    const ctx = document.getElementById('histogramChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(data),
+            datasets: [{
+                data: Object.values(data),
+                backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Count'
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time Range'
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createContributorsChart(data) {
+    const ctx = document.getElementById('contributorsChart').getContext('2d');
+    
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.map(c => c.username),
+            datasets: [{
+                data: data.map(c => c.contributions),
+                backgroundColor: 'rgba(75, 192, 192, 0.8)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            indexAxis: 'y',
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+            scales: {
+                x: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Contributions'
+                    }
+                }
+            }
+        }
+    });
+}
+</script>
+{% endblock %}
