@@ -45,7 +45,7 @@ def is_cache_valid(cache_file):
     return datetime.now() - cache_time < timedelta(hours=CACHE_DURATION_HOURS)
 
 def get_cached_data(url):
-    """Get data from cache if valid, otherwise fetch from API"""
+    """Get data from cache if valid, otherwise fetch from API with rate limit handling"""
     cache_key = get_cache_key(url)
     cache_file = os.path.join(CACHE_DIR, f'{cache_key}.json')
     
@@ -54,20 +54,51 @@ def get_cached_data(url):
         with open(cache_file, 'r') as f:
             return json.load(f)
     
-    # Fetch from API
-    try:
-        response = requests.get(url, headers=get_github_headers())
-        response.raise_for_status()
-        data = response.json()
-        
-        # Cache the response
-        with open(cache_file, 'w') as f:
-            json.dump(data, f)
-        
-        return data
-    except requests.exceptions.RequestException as e:
-        print(f"API request failed: {e}")
-        return None
+    # Fetch from API with rate limit handling
+    max_retries = 3
+    retry_delay = 1
+    
+    for attempt in range(max_retries):
+        try:
+            response = requests.get(url, headers=get_github_headers())
+            
+            # Check for rate limiting
+            if response.status_code == 403:
+                rate_limit_remaining = response.headers.get('X-RateLimit-Remaining', '0')
+                if rate_limit_remaining == '0':
+                    reset_time = response.headers.get('X-RateLimit-Reset')
+                    if reset_time:
+                        reset_datetime = datetime.fromtimestamp(int(reset_time))
+                        wait_time = (reset_datetime - datetime.now()).total_seconds()
+                        if wait_time > 0 and wait_time < 3600:  # Wait up to 1 hour
+                            import time
+                            print(f"Rate limit exceeded. Waiting {wait_time:.0f} seconds...")
+                            time.sleep(min(wait_time, 60))  # Cap wait at 60 seconds for this implementation
+                            continue
+                    raise requests.exceptions.HTTPError(f"GitHub API rate limit exceeded. Please try again later.")
+            
+            response.raise_for_status()
+            data = response.json()
+            
+            # Cache the response
+            with open(cache_file, 'w') as f:
+                json.dump(data, f)
+            
+            return data
+            
+        except requests.exceptions.HTTPError as e:
+            if attempt == max_retries - 1:
+                print(f"API request failed after {max_retries} attempts: {e}")
+                return None
+            # Exponential backoff for retries
+            import time
+            time.sleep(retry_delay * (2 ** attempt))
+            
+        except requests.exceptions.RequestException as e:
+            print(f"API request failed: {e}")
+            return None
+    
+    return None
 
 def parse_github_url(url):
     """Parse GitHub repository URL to extract owner and repo"""
@@ -155,8 +186,8 @@ class GitHubHealthAnalyzer:
         prs_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:pr+state:closed+is:merged&sort=updated&order=desc&per_page=100"
         prs_data = get_cached_data(prs_url)
         
-        # Get stale issues/PRs
-        stale_date = (datetime.now() - timedelta(days=60)).isoformat()
+        # Get stale issues/PRs (60+ days old)
+        stale_date = (datetime.now() - timedelta(days=60)).strftime('%Y-%m-%d')
         stale_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+state:open+updated:<{stale_date}"
         stale_data = get_cached_data(stale_issues_url)
         

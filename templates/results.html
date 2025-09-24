@@ -88,8 +88,8 @@
 
 {% block extra_scripts %}
 <script>
-const owner = '{{ owner }}';
-const repo = '{{ repo }}';
+const owner = {{ owner|tojson }};
+const repo = {{ repo|tojson }};
 
 // Load metrics on page load
 document.addEventListener('DOMContentLoaded', function() {
@@ -242,10 +242,17 @@ function displayCommunityMetrics(metrics) {
     container.innerHTML = metricCards.map(createMetricCard).join('');
 }
 
+// Global storage for modal data to avoid XSS
+window.modalDataStore = {};
+
 function createMetricCard(metric) {
+    // Store modal data safely
+    const dataId = `${metric.modalId}_${Date.now()}`;
+    window.modalDataStore[dataId] = metric.modalData;
+    
     return `
         <div class="col-lg-3 col-md-4 col-sm-6">
-            <div class="metric-card ${metric.classification}" onclick="showModal('${metric.modalId}', '${metric.title}', ${JSON.stringify(metric.modalData).replace(/"/g, '&quot;')})">
+            <div class="metric-card ${metric.classification}" onclick="showModal('${metric.modalId}', '${metric.title}', '${dataId}')">
                 <div class="metric-icon">
                     <i class="${metric.icon}"></i>
                 </div>
@@ -295,8 +302,15 @@ function getFirstIssuesClassification(count) {
     return 'danger';
 }
 
-function showModal(modalId, title, data) {
+function showModal(modalId, title, dataId) {
     document.getElementById('modalTitle').textContent = title;
+    
+    // Get data from safe storage
+    const data = window.modalDataStore[dataId];
+    if (!data) {
+        console.error('Modal data not found for ID:', dataId);
+        return;
+    }
     
     let modalContent = '';
     
@@ -341,7 +355,7 @@ function createHistogramModal(data, title) {
 }
 
 function createContributorsModal(data) {
-    if (!data || data.length === 0) {
+    if (!Array.isArray(data) || data.length === 0) {
         return '<p>No contributor data available.</p>';
     }
     
@@ -356,7 +370,7 @@ function createContributorsModal(data) {
 }
 
 function createHealthFilesModal(data) {
-    if (!data || data.length === 0) {
+    if (!Array.isArray(data) || data.length === 0) {
         return '<p>No health file information available.</p>';
     }
     
@@ -444,12 +458,18 @@ function createHistogramChart(data, chartId) {
 function createContributorsChart(data) {
     const ctx = document.getElementById('contributorsChart').getContext('2d');
     
+    // Ensure data is an array and has valid structure
+    if (!Array.isArray(data) || data.length === 0) {
+        console.warn('Invalid contributors data:', data);
+        data = []; // fallback to empty array
+    }
+    
     new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: data.map(c => c.username),
+            labels: data.map(c => c.username || 'Unknown'),
             datasets: [{
-                data: data.map(c => c.contributions),
+                data: data.map(c => c.contributions || 0),
                 backgroundColor: 'rgba(75, 192, 192, 0.8)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 1
