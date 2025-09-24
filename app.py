@@ -186,10 +186,12 @@ class GitHubHealthAnalyzer:
         prs_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:pr+state:closed+is:merged&sort=updated&order=desc&per_page=100"
         prs_data = get_cached_data(prs_url)
         
-        # Get stale issues/PRs (60+ days old)
+        # Get stale issues and PRs separately (60+ days old)
         stale_date = (datetime.now() - timedelta(days=60)).strftime('%Y-%m-%d')
-        stale_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+state:open+updated:<{stale_date}"
-        stale_data = get_cached_data(stale_issues_url)
+        stale_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:issue+state:open+updated:<{stale_date}"
+        stale_prs_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:pr+state:open+updated:<{stale_date}"
+        stale_issues_data = get_cached_data(stale_issues_url)
+        stale_prs_data = get_cached_data(stale_prs_url)
         
         # Calculate metrics
         issue_close_times = self._calculate_close_times(issues_data)
@@ -198,7 +200,8 @@ class GitHubHealthAnalyzer:
         return {
             'median_issue_close_time': self._calculate_median(issue_close_times),
             'median_pr_merge_time': self._calculate_median(pr_merge_times),
-            'stale_items': stale_data.get('total_count', 0) if stale_data else 0,
+            'stale_issues': stale_issues_data.get('total_count', 0) if stale_issues_data else 0,
+            'stale_prs': stale_prs_data.get('total_count', 0) if stale_prs_data else 0,
             'issue_close_times_distribution': self._create_time_distribution(issue_close_times),
             'pr_merge_times_distribution': self._create_time_distribution(pr_merge_times)
         }

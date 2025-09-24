@@ -148,12 +148,20 @@ function displayResponsivenessMetrics(metrics) {
             modalData: metrics.pr_merge_times_distribution
         },
         {
-            title: 'Stale Issues/PRs',
-            value: metrics.stale_items.toString(),
+            title: 'Stale Issues',
+            value: metrics.stale_issues.toString(),
+            icon: 'fas fa-exclamation-circle',
+            classification: getStaleClassification(metrics.stale_issues),
+            modalId: 'staleIssues',
+            modalData: { count: metrics.stale_issues }
+        },
+        {
+            title: 'Stale PRs',
+            value: metrics.stale_prs.toString(),
             icon: 'fas fa-clock',
-            classification: getStaleClassification(metrics.stale_items),
-            modalId: 'staleItems',
-            modalData: { count: metrics.stale_items }
+            classification: getStaleClassification(metrics.stale_prs),
+            modalId: 'stalePRs',
+            modalData: { count: metrics.stale_prs }
         }
     ];
     

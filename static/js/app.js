@@ -1,5 +1,11 @@
 // Custom JavaScript for GitHub Health Dashboard
 
+// Example repository analysis
+function analyzeExample(repoPath) {
+    document.getElementById('repo_url').value = repoPath;
+    document.getElementById('analyzeForm').submit();
+}
+
 // Form validation for home page
 document.addEventListener('DOMContentLoaded', function() {
     const analyzeForm = document.getElementById('analyzeForm');

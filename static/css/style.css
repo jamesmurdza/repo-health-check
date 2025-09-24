@@ -29,12 +29,12 @@ body {
 /* Metric Cards */
 .metric-card {
     background: white;
-    border-radius: 12px;
-    padding: 1.5rem;
+    border-radius: 4px;
+    padding: 1rem;
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    border: 3px solid transparent;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -43,8 +43,8 @@ body {
 }
 
 .metric-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .metric-card.good {
@@ -63,8 +63,8 @@ body {
 }
 
 .metric-icon {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
     opacity: 0.8;
 }
 
@@ -81,15 +81,15 @@ body {
 }
 
 .metric-title {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     font-weight: 600;
     color: #495057;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.4rem;
     line-height: 1.2;
 }
 
 .metric-value {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     font-weight: 700;
     color: #212529;
 }
@@ -97,12 +97,12 @@ body {
 /* Home page styling */
 .card {
     border: none;
-    border-radius: 16px;
+    border-radius: 6px;
 }
 
 .form-control-lg {
-    border-radius: 8px;
-    border: 2px solid #dee2e6;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
     padding: 0.75rem 1rem;
 }
 
@@ -112,9 +112,35 @@ body {
 }
 
 .btn-lg {
-    border-radius: 8px;
+    border-radius: 4px;
     font-weight: 600;
     padding: 0.75rem 2rem;
+}
+
+/* Example links */
+.example-links {
+    margin-top: 1.5rem;
+}
+
+.example-link {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #495057;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.example-link:hover {
+    background: #e9ecef;
+    color: #212529;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Loading indicator */
