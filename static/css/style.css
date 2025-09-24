@@ -92,8 +92,8 @@ body {
 
 /* Home page styling */
 .cat-icon {
-    width: 64px;
-    height: 64px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
 }
 
@@ -226,8 +226,8 @@ canvas {
     }
     
     .cat-icon {
-        width: 48px;
-        height: 48px;
+        width: 64px;
+        height: 64px;
     }
 }
 
