@@ -91,6 +91,17 @@ body {
 }
 
 /* Home page styling */
+.cat-icon {
+    width: 64px;
+    height: 64px;
+    object-fit: contain;
+}
+
+.analyze-items {
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
 .card {
     border: none;
     border-radius: 6px;
@@ -207,6 +218,16 @@ canvas {
     
     .metric-card {
         margin-bottom: 1rem;
+    }
+    
+    .analyze-items {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cat-icon {
+        width: 48px;
+        height: 48px;
     }
 }
 

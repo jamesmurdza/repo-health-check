@@ -1,21 +1,20 @@
 {% extends "base.html" %}
 
-{% block title %}GitHub Repository Health Dashboard{% endblock %}
+{% block title %}Repository Health Check{% endblock %}
 
 {% block content %}
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center">
-                <div class="mb-4">
-                    <i class="fab fa-github display-1 text-primary mb-3"></i>
-                    <h1 class="card-title">GitHub Health Dashboard</h1>
-                    <p class="card-text text-muted">Analyze the health and activity of any GitHub repository</p>
+                <div class="mb-5">
+                    <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon mb-3">
+                    <h1 class="card-title">Repository Health Check</h1>
+                    <p class="card-text text-muted">Enter a GitHub repository and quickly see activity and health metrics.</p>
                 </div>
                 
                 <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm">
-                    <div class="mb-3">
-                        <label for="repo_url" class="form-label">GitHub Repository URL</label>
+                    <div class="mb-4">
                         <div class="input-group input-group-lg">
                             <input 
                                 type="text" 
@@ -23,17 +22,17 @@
                                 id="repo_url" 
                                 name="repo_url" 
                                 placeholder="https://github.com/owner/repository"
+                                aria-label="GitHub repository URL"
                                 required
                             >
                             <button type="submit" class="btn btn-primary px-4">
                                 <i class="fas fa-chart-line me-2"></i>Analyze
                             </button>
                         </div>
-                        <div class="form-text">Enter the full GitHub repository URL or just owner/repository</div>
                     </div>
                 </form>
                 
-                <div class="example-links">
+                <div class="example-links mb-4">
                     <h6 class="mb-2">Try these examples:</h6>
                     <a href="#" class="example-link" onclick="analyzeExample('langchain-ai/langchain')">langchain-ai/langchain</a>
                     <a href="#" class="example-link" onclick="analyzeExample('microsoft/vscode')">microsoft/vscode</a>
@@ -41,26 +40,20 @@
                     <a href="#" class="example-link" onclick="analyzeExample('nodejs/node')">nodejs/node</a>
                 </div>
                 
-                <div class="mt-4">
+                <div class="mt-5">
                     <h6 class="mb-3">What we analyze:</h6>
-                    <div class="row justify-content-center text-center">
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center justify-content-center mb-2">
-                                <i class="fas fa-clock text-warning me-2"></i>
-                                <small>Responsiveness</small>
-                            </div>
+                    <div class="d-flex justify-content-center text-center analyze-items">
+                        <div class="d-flex align-items-center me-4">
+                            <i class="fas fa-clock text-warning me-2"></i>
+                            <small>Responsiveness</small>
                         </div>
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center justify-content-center mb-2">
-                                <i class="fas fa-chart-bar text-success me-2"></i>
-                                <small>Activity</small>
-                            </div>
+                        <div class="d-flex align-items-center me-4">
+                            <i class="fas fa-chart-bar text-success me-2"></i>
+                            <small>Activity</small>
                         </div>
-                        <div class="col-md-4">
-                            <div class="d-flex align-items-center justify-content-center mb-2">
-                                <i class="fas fa-users text-info me-2"></i>
-                                <small>Community</small>
-                            </div>
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-users text-info me-2"></i>
+                            <small>Community</small>
                         </div>
                     </div>
                 </div>
