@@ -10,7 +10,7 @@
 }
 
 body {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
@@ -30,16 +30,12 @@ body {
 .metric-card {
     background: white;
     border-radius: 4px;
-    padding: 1rem;
+    padding: 0.75rem;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     border: 1px solid transparent;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
 }
 
 .metric-card:hover {
@@ -63,9 +59,9 @@ body {
 }
 
 .metric-icon {
-    font-size: 1.5rem;
-    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
     opacity: 0.8;
+    min-width: 24px;
 }
 
 .metric-card.good .metric-icon {
@@ -89,7 +85,7 @@ body {
 }
 
 .metric-value {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
     font-weight: 700;
     color: #212529;
 }
