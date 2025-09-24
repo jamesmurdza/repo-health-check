@@ -1,0 +1,74 @@
+# GitHub Repository Health Dashboard
+
+Build a Flask web app analyzing GitHub repo health metrics w/ interactive dashboard. Two pages: home form for repo URL input, results page w/ color-coded health indicators + modal details. Include a project README.
+
+## Frontend Structure:
+
+Home Page:
+- Centered form, single text input for GitHub URL
+- Submit button, Flask flash msgs for errors
+- Clean styling
+
+Results Page:
+- Shows a clear loading indicator while the results are loading
+- Header: repo name
+- Consists of Key Metrics sections
+- Within each section is a responsive grid of metrics
+- Each metric has a cute icon associated with it
+- Each metric is classified subjectively on a scale of green-yellow-red (from good to bad)
+- The metric shows as a square or rectangle, and the background color shows its classification
+- Click opens modal w/ details + charts
+
+Modal & Charts UI:
+- Each metric modal contains detailed description and supporting data
+- Issue Close Time modal: histogram showing distribution of close times (binned by days: <1d, <2d, etc.)
+- PR Merge Time modal: histogram showing distribution of merge times (binned by days)
+- Active Contributors modal: horizontal bar chart showing top 10 contributors by commit count (with "Other" category for remaining contributors)
+- Documentation modal: checklist table showing presence of key files (README, LICENSE, CONTRIBUTING, etc.)
+- Other modals: tables with raw supporting statistics and sample sizes
+
+## Key Metrics Sections:
+
+Responsiveness:
+- Median issue close time (out of last 100 closed issues)
+- Median PR merge time (out of last 100 merged PRs)
+- Stale issues/PRs (60+ days inactive)
+
+Activity:
+- Commits last 30 days
+- Active contributors this month
+- Issue close rate % (closed/total)
+- PR merge rate % (merged/total)
+
+Community:
+- GitHub health score 0-100%
+- New contributors this month (Note: The number of contributors who contributed this month but not last month)
+- Good first issues count
+- External contribution % (Note: External contributions come from outside the repository organization or owner)
+
+## Implementation details:
+
+Caching System:
+- Hash at the HTTP request level with URL hashing for keys
+- Cache values can additionally be saved in a database or the filesystem
+- Retain cache values for 24 hours
+- Graceful API rate limit handling
+
+GitHub API Endpoints:
+/repos/{owner}/{repo} - basic info
+/search/issues - accurate counts/filtering  
+/repos/{owner}/{repo}/pulls - PR data
+/repos/{owner}/{repo}/contributors - contributor info
+/repos/{owner}/{repo}/commits - commit history
+/repos/{owner}/{repo}/community/profile - health score
+/orgs/{org}/members - org membership (optional)
+
+Error Handling:
+- Rate limiting management
+- Clear user error messages
+
+Configuration:
+- Optional GITHUB_TOKEN env var for higher limits
+- Token auth headers when available
+- Functional w/o token but reduced capabilities
+
