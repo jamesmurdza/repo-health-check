@@ -504,19 +504,25 @@ function createSimpleModal(data, modalId) {
 function createHistogramChart(data, chartId) {
     const ctx = document.getElementById('histogramChart').getContext('2d');
     
-    // Convert data to array of objects and sort from fastest to slowest
-    const dataEntries = Object.entries(data).map(([label, value]) => ({
-        label: label,
-        value: value,
-        sortOrder: getSortOrder(label)
+    // Define canonical order for time bins (shortest to longest)
+    const BIN_ORDER = ['<1d', '1-2d', '2-7d', '1-2w', '2-4w', '1-3m', '>3m'];
+    
+    // Convert data to array of {label, count} objects
+    const dataItems = Object.entries(data).map(([label, count]) => ({
+        label: label.trim(),
+        count: count
     }));
     
-    // Sort by sortOrder (fastest to slowest)
-    dataEntries.sort((a, b) => a.sortOrder - b.sortOrder);
+    // Sort by canonical order
+    const sortedItems = dataItems.sort((a, b) => {
+        const aIndex = BIN_ORDER.indexOf(a.label);
+        const bIndex = BIN_ORDER.indexOf(b.label);
+        return aIndex - bIndex;
+    });
     
-    // Extract sorted labels and values
-    const sortedLabels = dataEntries.map(entry => entry.label);
-    const sortedValues = dataEntries.map(entry => entry.value);
+    // Extract sorted labels and values from the same sorted array
+    const sortedLabels = sortedItems.map(item => item.label);
+    const sortedValues = sortedItems.map(item => item.count);
     
     // Create color mapping based on position (left=green, middle=yellow, right=red)
     const numBars = sortedLabels.length;
@@ -543,7 +549,12 @@ function createHistogramChart(data, chartId) {
     
     const borderColor = backgroundColor.map(color => color.replace('0.8', '1'));
     
-    new Chart(ctx, {
+    // Destroy existing chart if it exists
+    if (window.histogramChart) {
+        window.histogramChart.destroy();
+    }
+    
+    window.histogramChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: sortedLabels,
@@ -582,33 +593,6 @@ function createHistogramChart(data, chartId) {
     });
 }
 
-function getSortOrder(label) {
-    // Define sort order for the actual time bin labels from the backend
-    // (lower number = faster = leftmost)
-    const sortMap = {
-        '<1d': 1,
-        '1-2d': 2,
-        '2-7d': 3,
-        '1-2w': 4,
-        '2-4w': 5,
-        '1-3m': 6,
-        '>3m': 7
-    };
-    
-    // Return the predefined sort order if the label matches
-    if (sortMap.hasOwnProperty(label)) {
-        return sortMap[label];
-    }
-    
-    // Fallback: try to extract numbers and sort by them for any other patterns
-    const range = label.toLowerCase();
-    const numbers = range.match(/\d+/g);
-    if (numbers) {
-        return parseInt(numbers[0]) + 10; // Offset to put after known ranges
-    }
-    
-    return 100; // Default for unknown patterns
-}
 
 function createContributorsChart(data) {
     const ctx = document.getElementById('contributorsChart').getContext('2d');
