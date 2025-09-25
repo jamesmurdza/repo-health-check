@@ -8,8 +8,8 @@
         <div class="col-md-8">
             <div class="text-center">
                 <div class="mb-4 text-center">
-                    <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon mb-3">
-                    <p class="mb-3">Enter a GitHub repository to see its health stats.</p>
+                    <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon mb-2">
+                    <p class="mb-3 fs-5">Get meaningful health metrics for any GitHub repository.</p>
                 </div>
                 
                 <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm" class="mb-6">
