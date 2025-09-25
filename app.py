@@ -32,6 +32,22 @@ def get_github_headers():
     
     return headers
 
+def floor_utc_to_day(dt):
+    """Floor datetime to start of UTC day"""
+    return dt.replace(hour=0, minute=0, second=0, microsecond=0)
+
+def normalized_since(days_ago, granularity='day'):
+    """Get normalized timestamp for cache consistency"""
+    dt = datetime.utcnow() - timedelta(days=days_ago)
+    if granularity == 'day':
+        dt = floor_utc_to_day(dt)
+    return dt.isoformat() + 'Z'
+
+def normalized_stale_date(days_ago):
+    """Get normalized date string for stale queries"""
+    dt = datetime.utcnow() - timedelta(days=days_ago)
+    return floor_utc_to_day(dt).strftime('%Y-%m-%d')
+
 def get_cache_key(url):
     """Generate cache key from URL"""
     return hashlib.md5(url.encode()).hexdigest()
@@ -187,7 +203,7 @@ class GitHubHealthAnalyzer:
         prs_data = get_cached_data(prs_url)
         
         # Get stale issues and PRs separately (60+ days old)
-        stale_date = (datetime.now() - timedelta(days=60)).strftime('%Y-%m-%d')
+        stale_date = normalized_stale_date(60)
         stale_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:issue+state:open+updated:<{stale_date}"
         stale_prs_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+type:pr+state:open+updated:<{stale_date}"
         stale_issues_data = get_cached_data(stale_issues_url)
@@ -209,7 +225,7 @@ class GitHubHealthAnalyzer:
     def _analyze_activity(self, repo_data):
         """Analyze activity metrics"""
         # Get commits from last 30 days
-        thirty_days_ago = (datetime.now() - timedelta(days=30)).isoformat()
+        thirty_days_ago = normalized_since(30, 'day')
         commits_url = f"{self.base_url}/commits?since={thirty_days_ago}&per_page=100"
         commits_data = get_cached_data(commits_url)
         
@@ -390,7 +406,7 @@ class GitHubHealthAnalyzer:
                 return 0
             
             # Get commits from last 30 days to find new contributors
-            thirty_days_ago = (datetime.now() - timedelta(days=30)).isoformat()
+            thirty_days_ago = normalized_since(30, 'day')
             recent_commits_url = f"{self.base_url}/commits?since={thirty_days_ago}&per_page=100"
             recent_commits = get_cached_data(recent_commits_url)
             
@@ -398,7 +414,7 @@ class GitHubHealthAnalyzer:
                 return 0
             
             # Get commits from before 30 days to compare
-            sixty_days_ago = (datetime.now() - timedelta(days=60)).isoformat()
+            sixty_days_ago = normalized_since(60, 'day')
             older_commits_url = f"{self.base_url}/commits?since={sixty_days_ago}&until={thirty_days_ago}&per_page=100"
             older_commits = get_cached_data(older_commits_url)
             
