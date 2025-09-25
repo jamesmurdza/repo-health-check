@@ -267,7 +267,7 @@ function createMetricCard(metric) {
     window.modalDataStore[dataId] = metric.modalData;
     
     return `
-        <div class="col-lg-3 col-md-4 col-sm-6">
+        <div class="col-lg-3 col-md-3 col-sm-6">
             <div class="metric-card ${metric.classification}" onclick="showModal('${metric.modalId}', '${metric.title}', '${dataId}')">
                 <div class="d-flex align-items-center">
                     <div class="metric-icon me-3">
