@@ -256,9 +256,29 @@ class GitHubHealthAnalyzer:
         community_url = f"{self.base_url}/community/profile"
         community_data = get_cached_data(community_url)
         
-        # Get good first issues
-        first_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+label:'good first issue'+state:open"
-        first_issues_data = get_cached_data(first_issues_url)
+        # Get good first issues - try multiple label variations
+        good_first_labels = [
+            "good first issue",
+            "good-first-issue", 
+            "beginner",
+            "beginner-friendly",
+            "easy",
+            "starter",
+            "help wanted"
+        ]
+        
+        first_issues_count = 0
+        for label in good_first_labels:
+            first_issues_url = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+label:\"{label}\"+state:open"
+            first_issues_data = get_cached_data(first_issues_url)
+            if first_issues_data:
+                first_issues_count += first_issues_data.get('total_count', 0)
+        
+        # Remove duplicates by getting unique issues (simplified approach - take max count)
+        first_issues_url_combined = f"{GITHUB_API_BASE}/search/issues?q=repo:{self.owner}/{self.repo}+label:\"good first issue\",\"good-first-issue\",\"beginner\",\"easy\"+state:open"
+        first_issues_combined = get_cached_data(first_issues_url_combined)
+        if first_issues_combined:
+            first_issues_count = max(first_issues_count, first_issues_combined.get('total_count', 0))
         
         # Calculate new contributors (simplified - contributors this month vs last month)
         new_contributors = self._calculate_new_contributors()
@@ -276,7 +296,7 @@ class GitHubHealthAnalyzer:
         return {
             'health_score': health_score,
             'new_contributors': new_contributors,
-            'good_first_issues': first_issues_data.get('total_count', 0) if first_issues_data else 0,
+            'good_first_issues': first_issues_count,
             'external_contribution_pct': external_contrib_pct,
             'health_files': health_files
         }
@@ -360,16 +380,91 @@ class GitHubHealthAnalyzer:
         } for contrib in sorted_contributors]
     
     def _calculate_new_contributors(self):
-        """Calculate new contributors (simplified implementation)"""
-        # This is a simplified implementation
-        # In a full implementation, you'd compare contributors from this month vs last month
-        return 0
+        """Calculate new contributors in the last 30 days"""
+        try:
+            # Get all contributors
+            all_contributors_url = f"{self.base_url}/contributors?per_page=100"
+            all_contributors = get_cached_data(all_contributors_url)
+            
+            if not all_contributors:
+                return 0
+            
+            # Get commits from last 30 days to find new contributors
+            thirty_days_ago = (datetime.now() - timedelta(days=30)).isoformat()
+            recent_commits_url = f"{self.base_url}/commits?since={thirty_days_ago}&per_page=100"
+            recent_commits = get_cached_data(recent_commits_url)
+            
+            if not recent_commits:
+                return 0
+            
+            # Get commits from before 30 days to compare
+            sixty_days_ago = (datetime.now() - timedelta(days=60)).isoformat()
+            older_commits_url = f"{self.base_url}/commits?since={sixty_days_ago}&until={thirty_days_ago}&per_page=100"
+            older_commits = get_cached_data(older_commits_url)
+            
+            # Extract contributors from recent commits
+            recent_contributors = set()
+            for commit in recent_commits:
+                if commit.get('author') and commit['author'].get('login'):
+                    recent_contributors.add(commit['author']['login'])
+            
+            # Extract contributors from older commits  
+            older_contributors = set()
+            if older_commits:
+                for commit in older_commits:
+                    if commit.get('author') and commit['author'].get('login'):
+                        older_contributors.add(commit['author']['login'])
+            
+            # New contributors are those in recent but not in older
+            new_contributors = recent_contributors - older_contributors
+            return len(new_contributors)
+            
+        except Exception as e:
+            print(f"Error calculating new contributors: {e}")
+            return 0
     
     def _calculate_external_contributions(self):
-        """Calculate external contribution percentage (simplified implementation)"""
-        # This is a simplified implementation
-        # In a full implementation, you'd check if contributors are org members
-        return 0
+        """Calculate external contribution percentage"""
+        try:
+            # Get repository info to determine organization
+            repo_data = get_cached_data(self.base_url)
+            if not repo_data:
+                return 0
+            
+            # Get organization members if this is an org repo
+            org_members = set()
+            if repo_data.get('organization'):
+                org_name = repo_data['organization']['login']
+                org_members_url = f"{GITHUB_API_BASE}/orgs/{org_name}/members?per_page=100"
+                org_members_data = get_cached_data(org_members_url)
+                if org_members_data:
+                    org_members = {member['login'] for member in org_members_data}
+            
+            # Get all contributors
+            contributors_url = f"{self.base_url}/contributors?per_page=100"
+            contributors_data = get_cached_data(contributors_url)
+            
+            if not contributors_data:
+                return 0
+            
+            total_contributors = len(contributors_data)
+            external_contributors = 0
+            
+            for contributor in contributors_data:
+                username = contributor.get('login', '')
+                # Count as external if not in org members and not the repo owner
+                if username and username not in org_members and username != self.owner:
+                    external_contributors += 1
+            
+            if total_contributors == 0:
+                return 0
+                
+            percentage = (external_contributors / total_contributors) * 100
+            return round(percentage, 1)
+            
+        except Exception as e:
+            print(f"Error calculating external contributions: {e}")
+            return 0
     
     def _format_health_files(self, files):
         """Format health files data for display"""
