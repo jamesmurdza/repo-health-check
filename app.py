@@ -394,8 +394,8 @@ if __name__ == '__main__':
         logging.basicConfig(level=logging.INFO)
         app.logger.setLevel(logging.INFO)
     
-    # Get port from environment variable or default to 5000
-    port = int(os.environ.get('PORT', 5000))
+    # Always use port 5000 for consistency with deployment configuration
+    port = 5000
     
     # Run with production-ready settings
     app.run(host='0.0.0.0', port=port, debug=False)
