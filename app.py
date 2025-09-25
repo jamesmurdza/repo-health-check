@@ -386,4 +386,16 @@ class GitHubHealthAnalyzer:
         return file_checks
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    # Production configuration - disable debug mode and enable proper logging
+    import logging
+    
+    # Set up logging
+    if not app.debug:
+        logging.basicConfig(level=logging.INFO)
+        app.logger.setLevel(logging.INFO)
+    
+    # Get port from environment variable or default to 5000
+    port = int(os.environ.get('PORT', 5000))
+    
+    # Run with production-ready settings
+    app.run(host='0.0.0.0', port=port, debug=False)
