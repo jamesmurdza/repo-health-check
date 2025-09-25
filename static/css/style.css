@@ -45,17 +45,17 @@ body {
 
 .metric-card.good {
     border-color: var(--color-good);
-    background: linear-gradient(135deg, var(--color-good-light), white);
+    background: var(--color-good-light);
 }
 
 .metric-card.warning {
     border-color: var(--color-warning);
-    background: linear-gradient(135deg, var(--color-warning-light), white);
+    background: var(--color-warning-light);
 }
 
 .metric-card.danger {
     border-color: var(--color-danger);
-    background: linear-gradient(135deg, var(--color-danger-light), white);
+    background: var(--color-danger-light);
 }
 
 .metric-icon {
@@ -157,7 +157,6 @@ body {
     background: white;
     border-radius: 16px;
     padding: 3rem;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Modal styling */
