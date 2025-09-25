@@ -1,25 +1,17 @@
 /* Custom CSS for GitHub Health Dashboard */
 
 :root {
-    --color-good: #1a7f37;
-    --color-warning: #bf8700;
-    --color-danger: #cf222e;
-    --color-good-light: #dcfdf0;
-    --color-warning-light: #fff8c5;
-    --color-danger-light: #ffebe9;
-    --border-default: #d1d9e0;
-    --color-canvas-default: #ffffff;
-    --color-canvas-subtle: #f6f8fa;
-    --color-fg-default: #1f2328;
-    --color-fg-muted: #656d76;
-    --color-border-muted: #d8dee4;
+    --color-good: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-good-light: #d4edda;
+    --color-warning-light: #fff3cd;
+    --color-danger-light: #f8d7da;
 }
 
 body {
-    background-color: var(--color-canvas-subtle);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
-    color: var(--color-fg-default);
-    line-height: 1.5;
+    background-color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .navbar-brand {
@@ -28,83 +20,42 @@ body {
 }
 
 .section-title {
-    color: var(--color-fg-default);
-    border-bottom: 1px solid var(--border-default);
-    padding-bottom: 0.75rem;
+    color: #495057;
+    border-bottom: 2px solid #dee2e6;
+    padding-bottom: 0.5rem;
     margin-bottom: 1.5rem;
-    font-size: 1.25rem;
-    font-weight: 600;
 }
 
 /* Metric Cards */
 .metric-card {
-    background: var(--color-canvas-default);
-    border-radius: 6px;
-    padding: 1rem;
+    background: white;
+    border-radius: 4px;
+    padding: 0.75rem;
     cursor: pointer;
-    transition: all 0.15s ease;
-    border: 1px solid var(--border-default);
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid transparent;
     height: 100%;
-    position: relative;
 }
 
 .metric-card:hover {
-    border-color: var(--color-border-muted);
-    box-shadow: 0 3px 6px rgba(140, 149, 159, 0.15);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .metric-card.good {
-    border-left: 3px solid var(--color-good);
-    background: var(--color-canvas-default);
-}
-
-.metric-card.good:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    border-color: var(--color-good);
     background: var(--color-good-light);
-    opacity: 0.05;
-    border-radius: 6px;
-    pointer-events: none;
 }
 
 .metric-card.warning {
-    border-left: 3px solid var(--color-warning);
-    background: var(--color-canvas-default);
-}
-
-.metric-card.warning:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    border-color: var(--color-warning);
     background: var(--color-warning-light);
-    opacity: 0.05;
-    border-radius: 6px;
-    pointer-events: none;
 }
 
 .metric-card.danger {
-    border-left: 3px solid var(--color-danger);
-    background: var(--color-canvas-default);
-}
-
-.metric-card.danger:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
+    border-color: var(--color-danger);
     background: var(--color-danger-light);
-    opacity: 0.05;
-    border-radius: 6px;
-    pointer-events: none;
 }
 
 .metric-icon {
@@ -126,22 +77,17 @@ body {
 }
 
 .metric-title {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: var(--color-fg-muted);
-    margin-bottom: 0.5rem;
-    line-height: 1.3;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    color: #495057;
+    margin-bottom: 0.4rem;
+    line-height: 1.2;
 }
 
 .metric-value {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--color-fg-default);
-    line-height: 1.2;
-    position: relative;
-    z-index: 1;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #212529;
 }
 
 /* Home page styling */
@@ -162,27 +108,22 @@ body {
 }
 
 .form-control-lg {
-    border-radius: 6px;
-    border: 1px solid var(--border-default);
-    padding: 0.75rem 0.875rem;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
     font-size: 0.875rem;
-    background-color: var(--color-canvas-default);
-    transition: border-color 0.15s ease;
 }
 
 .form-control-lg:focus {
-    border-color: #0969da;
-    box-shadow: 0 0 0 3px rgba(9, 105, 218, 0.12);
-    outline: none;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
 }
 
 .btn-lg {
-    border-radius: 6px;
-    font-weight: 500;
-    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    padding: 0.75rem 2rem;
     font-size: 0.875rem;
-    border: 1px solid transparent;
-    transition: all 0.15s ease;
 }
 
 /* Example links */
@@ -192,53 +133,46 @@ body {
 
 .example-link {
     display: inline-block;
-    padding: 0.375rem 0.75rem;
-    margin: 0.25rem;
-    background: var(--color-canvas-default);
-    border: 1px solid var(--border-default);
-    border-radius: 6px;
-    color: var(--color-fg-default);
+    padding: 0.4rem 0.8rem;
+    margin: 0.2rem;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 4px;
+    color: #495057;
     text-decoration: none;
-    font-size: 0.8125rem;
-    font-weight: 500;
-    transition: all 0.15s ease;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
 }
 
 .example-link:hover {
-    background: var(--color-canvas-subtle);
-    color: var(--color-fg-default);
+    background: #e9ecef;
+    color: #212529;
     text-decoration: none;
-    border-color: var(--color-border-muted);
-    box-shadow: 0 1px 3px rgba(140, 149, 159, 0.12);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Loading indicator */
 #loadingIndicator {
-    background: var(--color-canvas-default);
-    border-radius: 8px;
+    background: white;
+    border-radius: 16px;
     padding: 3rem;
-    border: 1px solid var(--border-default);
-    box-shadow: 0 1px 3px rgba(140, 149, 159, 0.12);
 }
 
 /* Modal styling */
 .modal-content {
-    border-radius: 8px;
-    border: 1px solid var(--border-default);
-    box-shadow: 0 8px 24px rgba(140, 149, 159, 0.2);
-    background: var(--color-canvas-default);
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
 }
 
 .modal-header {
-    border-bottom: 1px solid var(--border-default);
-    padding: 1.25rem 1.5rem;
-    background: var(--color-canvas-subtle);
-    border-radius: 8px 8px 0 0;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.5rem;
 }
 
 .modal-body {
     padding: 1.5rem;
-    color: var(--color-fg-default);
 }
 
 /* Table styling for health files */
@@ -342,37 +276,4 @@ canvas {
 /* Custom spacing classes */
 .mb-6 {
     margin-bottom: 4rem !important;
-}
-
-/* Container improvements */
-.container-fluid {
-    background: var(--color-canvas-subtle);
-    min-height: 100vh;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
-}
-
-/* Results page specific styling */
-.results-container {
-    background: var(--color-canvas-default);
-    border-radius: 8px;
-    border: 1px solid var(--border-default);
-    padding: 2rem;
-    margin: 1rem 0;
-    box-shadow: 0 1px 3px rgba(140, 149, 159, 0.12);
-}
-
-/* Metric grid improvements */
-.metric-grid {
-    gap: 1rem;
-}
-
-/* Repository header styling */
-.repo-header {
-    background: var(--color-canvas-default);
-    border: 1px solid var(--border-default);
-    border-radius: 8px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    box-shadow: 0 1px 3px rgba(140, 149, 159, 0.12);
 }
