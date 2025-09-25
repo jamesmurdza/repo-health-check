@@ -30,7 +30,7 @@
     <!-- Responsiveness Section -->
     <section class="mb-4">
         <h2 class="section-title">
-            <i class="fas fa-clock me-2 text-warning"></i>Responsiveness
+            <i class="fas fa-clock me-2" style="color: black;"></i>Responsiveness
         </h2>
         <div class="row g-3" id="responsivenessMetrics">
             <!-- Metrics will be populated here -->
@@ -40,7 +40,7 @@
     <!-- Activity Section -->
     <section class="mb-4">
         <h2 class="section-title">
-            <i class="fas fa-chart-bar me-2 text-good"></i>Activity
+            <i class="fas fa-chart-bar me-2" style="color: black;"></i>Activity
         </h2>
         <div class="row g-3" id="activityMetrics">
             <!-- Metrics will be populated here -->
@@ -50,7 +50,7 @@
     <!-- Community Section -->
     <section class="mb-4">
         <h2 class="section-title">
-            <i class="fas fa-users me-2" style="color: var(--color-neutral);"></i>Community
+            <i class="fas fa-users me-2" style="color: black;"></i>Community
         </h2>
         <div class="row g-3" id="communityMetrics">
             <!-- Metrics will be populated here -->
@@ -529,20 +529,20 @@ function createHistogramChart(data, chartId) {
     const backgroundColor = sortedLabels.map((_, index) => {
         if (numBars <= 2) {
             // For 1-2 bars, use good and danger
-            return index === 0 ? 'rgba(31, 136, 61, 0.8)' : 'rgba(207, 34, 46, 0.8)';
+            return index === 0 ? 'rgba(40, 167, 69, 0.8)' : 'rgba(220, 53, 69, 0.8)';
         } else if (numBars === 3) {
             // For 3 bars: good, warning, danger
-            const colors = ['rgba(31, 136, 61, 0.8)', 'rgba(154, 103, 0, 0.8)', 'rgba(207, 34, 46, 0.8)'];
+            const colors = ['rgba(40, 167, 69, 0.8)', 'rgba(255, 193, 7, 0.8)', 'rgba(220, 53, 69, 0.8)'];
             return colors[index];
         } else {
             // For more bars, distribute colors
             const third = Math.floor(numBars / 3);
             if (index < third) {
-                return 'rgba(31, 136, 61, 0.8)'; // good
+                return 'rgba(40, 167, 69, 0.8)'; // good
             } else if (index < third * 2) {
-                return 'rgba(154, 103, 0, 0.8)'; // warning
+                return 'rgba(255, 193, 7, 0.8)'; // warning
             } else {
-                return 'rgba(207, 34, 46, 0.8)'; // danger
+                return 'rgba(220, 53, 69, 0.8)'; // danger
             }
         }
     });

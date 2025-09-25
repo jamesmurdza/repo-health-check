@@ -1,13 +1,13 @@
 /* Custom CSS for GitHub Health Dashboard */
 
 :root {
-    /* GitHub-inspired professional colors */
-    --color-good: #1f883d;
-    --color-warning: #9a6700;
-    --color-danger: #cf222e;
-    --color-good-light: #dafbe1;
-    --color-warning-light: #fff8c5;
-    --color-danger-light: #ffebe9;
+    /* Bright professional colors */
+    --color-good: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-good-light: #d4edda;
+    --color-warning-light: #fff3cd;
+    --color-danger-light: #f8d7da;
     --color-neutral: #656d76;
     --color-border: #d1d9e0;
     --color-canvas-subtle: #f6f8fa;
@@ -62,45 +62,18 @@ body {
     background: var(--color-canvas-default);
 }
 
-.metric-card.good:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--color-good);
-}
 
 .metric-card.warning {
     border-left: 3px solid var(--color-warning);
     background: var(--color-canvas-default);
 }
 
-.metric-card.warning:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--color-warning);
-}
 
 .metric-card.danger {
     border-left: 3px solid var(--color-danger);
     background: var(--color-canvas-default);
 }
 
-.metric-card.danger:before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--color-danger);
-}
 
 .metric-icon {
     font-size: 1.125rem;
