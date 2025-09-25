@@ -583,24 +583,31 @@ function createHistogramChart(data, chartId) {
 }
 
 function getSortOrder(label) {
+    // Define sort order for the actual time bin labels from the backend
+    // (lower number = faster = leftmost)
+    const sortMap = {
+        '<1d': 1,
+        '1-2d': 2,
+        '2-7d': 3,
+        '1-2w': 4,
+        '2-4w': 5,
+        '1-3m': 6,
+        '>3m': 7
+    };
+    
+    // Return the predefined sort order if the label matches
+    if (sortMap.hasOwnProperty(label)) {
+        return sortMap[label];
+    }
+    
+    // Fallback: try to extract numbers and sort by them for any other patterns
     const range = label.toLowerCase();
-    
-    // Define sort order for common time ranges (lower number = faster = leftmost)
-    if (range.includes('same day') || range.includes('0-1')) return 1;
-    if (range.includes('0-3') || range.includes('1-3')) return 2;
-    if (range.includes('3-7') || range.includes('1-7')) return 3;
-    if (range.includes('7-14') || range.includes('1-2 week')) return 4;
-    if (range.includes('14-30') || range.includes('2-4 week')) return 5;
-    if (range.includes('30+') || range.includes('1+ month')) return 6;
-    
-    // For any other labels, try to extract numbers and sort by them
     const numbers = range.match(/\d+/g);
     if (numbers) {
         return parseInt(numbers[0]) + 10; // Offset to put after known ranges
     }
     
-    // Default sort order for unrecognized labels
-    return 100;
+    return 100; // Default for unknown patterns
 }
 
 function createContributorsChart(data) {
