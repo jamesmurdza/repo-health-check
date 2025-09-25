@@ -32,7 +32,8 @@
 
 <!-- Results Container -->
 <div id="resultsContainer" style="display: none;">
-    <!-- Responsiveness Section -->
+    <div class="results-container">
+        <!-- Responsiveness Section -->
         <section class="mb-5">
             <h2 class="section-title">
                 <i class="fas fa-clock me-2"></i>Responsiveness
@@ -61,6 +62,7 @@
                 <!-- Metrics will be populated here -->
             </div>
         </section>
+    </div>
 </div>
 
         </div>
@@ -85,6 +87,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="modalTitle"></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body" id="modalBody">
                 <!-- Modal content will be populated here -->
@@ -267,7 +270,7 @@ function createMetricCard(metric) {
     window.modalDataStore[dataId] = metric.modalData;
     
     return `
-        <div class="col-xl-3 col-lg-3 col-md-3 col-sm-6">
+        <div class="col-lg-3 col-md-4 col-sm-6">
             <div class="metric-card ${metric.classification}" onclick="showModal('${metric.modalId}', '${metric.title}', '${dataId}')">
                 <div class="d-flex align-items-center">
                     <div class="metric-icon me-3">
