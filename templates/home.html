@@ -7,10 +7,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center">
-                <div class="mb-5">
-                    <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon mb-4">
-                    <h1 class="card-title">Repository Health Check</h1>
-                    <p class="card-text text-muted mb-4">Enter a GitHub repository and quickly see activity and health metrics.</p>
+                <div class="mb-5 d-flex align-items-center justify-content-center">
+                    <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon me-4">
+                    <div class="text-start">
+                        <h1 class="card-title mb-2">Repository Health Check</h1>
+                        <p class="card-text text-muted mb-0">Enter a GitHub repository to see its health stats.</p>
+                    </div>
                 </div>
                 
                 <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm">
@@ -33,20 +35,11 @@
                 </form>
                 
                 <div class="example-links mb-5">
-                    <p class="mb-3">Try these examples:</p>
+                    <p class="mb-3">Popular repositories:</p>
                     <a href="#" class="example-link" onclick="analyzeExample('langchain-ai/langchain')">langchain-ai/langchain</a>
                     <a href="#" class="example-link" onclick="analyzeExample('microsoft/vscode')">microsoft/vscode</a>
                     <a href="#" class="example-link" onclick="analyzeExample('facebook/react')">facebook/react</a>
                     <a href="#" class="example-link" onclick="analyzeExample('nodejs/node')">nodejs/node</a>
-                </div>
-                
-                <div class="mt-5">
-                    <p class="mb-3">What we analyze:</p>
-                    <div class="text-center">
-                        <span class="example-link me-2">Responsiveness</span>
-                        <span class="example-link me-2">Activity</span>
-                        <span class="example-link">Community</span>
-                    </div>
                 </div>
             </div>
         </div>
