@@ -2,7 +2,7 @@
 
 Get meaningful health metrics for any GitHub repository.
 
-![Preview](https://github.com/user-attachments/assets/d1050e7f-469b-4c69-8232-25e552a46b23)
+![Preview](static/Preview.gif)
 
 This web app takes the URL of a public GitHub repository, and provides relevant and up-to-date data on the GitHub's open source activity and community.
 
