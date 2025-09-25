@@ -31,7 +31,7 @@ The core technical components are outlined below:
 
 Backend:
 *   Flask-based backend
-*   Integration with the GitHub REST API v3 and the Community Health API
+*   Integration with the [GitHub REST API v3](https://docs.github.com/en/rest) and the [Community Health API](https://docs.github.com/en/rest/metrics/community)
 *  File-based caching to store GitHub API responses for 24 hours.
 
 Frontend:
