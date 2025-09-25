@@ -41,10 +41,21 @@ Frontend:
 
 ## Setup Instructions
 
+### On Replit
+
 To use this as a Replit template:
 
 1.  **Remix on Replit:** Click the "Remix" button to create your own copy.
 2.  **Connect to GitHub:** When prompted, sign into your GitHub account to authorize access.
+
+### Local Setup
+
+To run this application locally, run the following:
+
+```
+pip install -r requirements.txt
+python app.py
+```
 
 ## Development Process
 
