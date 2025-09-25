@@ -550,7 +550,7 @@ function createHistogramChart(data, chartId) {
     const borderColor = backgroundColor.map(color => color.replace('0.8', '1'));
     
     // Destroy existing chart if it exists
-    if (window.histogramChart) {
+    if (window.histogramChart && typeof window.histogramChart.destroy === 'function') {
         window.histogramChart.destroy();
     }
     
