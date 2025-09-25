@@ -92,8 +92,8 @@ body {
 
 /* Home page styling */
 .cat-icon {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
 }
 
@@ -226,8 +226,8 @@ canvas {
     }
     
     .cat-icon {
-        width: 64px;
-        height: 64px;
+        width: 80px;
+        height: 80px;
     }
 }
 
@@ -270,4 +270,9 @@ canvas {
 
 .text-danger {
     color: var(--color-danger) !important;
+}
+
+/* Custom spacing classes */
+.mb-6 {
+    margin-bottom: 4rem !important;
 }

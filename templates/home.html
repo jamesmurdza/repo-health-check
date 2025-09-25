@@ -7,7 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center">
-                <div class="mb-5 d-flex align-items-center justify-content-center">
+                <div class="mb-6 d-flex align-items-center justify-content-center">
                     <img src="{{ url_for('static', filename='cat.png') }}" alt="Repository Health" class="cat-icon me-4">
                     <div class="text-start">
                         <h1 class="card-title mb-2">Repository Health Check</h1>
@@ -15,7 +15,7 @@
                     </div>
                 </div>
                 
-                <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm">
+                <form action="{{ url_for('analyze_repository') }}" method="POST" id="analyzeForm" class="mb-6">
                     <div class="mb-4">
                         <div class="input-group input-group-lg">
                             <input 
@@ -34,7 +34,7 @@
                     </div>
                 </form>
                 
-                <div class="example-links mb-5">
+                <div class="example-links">
                     <p class="mb-3">Popular repositories:</p>
                     <a href="#" class="example-link" onclick="analyzeExample('langchain-ai/langchain')">langchain-ai/langchain</a>
                     <a href="#" class="example-link" onclick="analyzeExample('microsoft/vscode')">microsoft/vscode</a>
