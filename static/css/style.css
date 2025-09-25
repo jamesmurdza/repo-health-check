@@ -45,17 +45,17 @@ body {
 
 .metric-card.good {
     border-color: var(--color-good);
-    background: var(--color-good-light);
+    background: linear-gradient(135deg, var(--color-good-light), white);
 }
 
 .metric-card.warning {
     border-color: var(--color-warning);
-    background: var(--color-warning-light);
+    background: linear-gradient(135deg, var(--color-warning-light), white);
 }
 
 .metric-card.danger {
     border-color: var(--color-danger);
-    background: var(--color-danger-light);
+    background: linear-gradient(135deg, var(--color-danger-light), white);
 }
 
 .metric-icon {
