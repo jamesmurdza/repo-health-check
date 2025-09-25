@@ -6,35 +6,21 @@ This web app takes the URL of a public GitHub repository, and provides relevant 
 
 This is useful for maintainers to see where the project can improve, and for users to see if the project is well maintained.
 
-The metrics measured include:
-
-*   **Responsiveness:**
-    *   Median issue close time
-    *   Median PR merge time
-    *   Number of stale issues
-    *   Number of stale PRs
-*   **Activity:**
-    *   Commits in the last 30 days
-    *   Active contributors
-    *   Issue close rate
-    *   PR merge rate
-    *   Top contributors
-*   **Community Engagement:**
-    *   Health score
-    *   New contributors
-    *   Good first issues
-    *   External contribution percentage
+### Metrics Measured
+| Responsiveness | Activity | Community Engagement |
+|---|---|---|
+| Median issue close time<br>Median PR merge time<br>Number of stale issues<br>Number of stale PRs | Commits in the last 30 days<br>Active contributors<br>Issue close rate<br>PR merge rate | Health score<br>New contributors<br>Good first issues<br>External contribution percentage |
 
 ## Technical Implementation
 
 The core technical components are outlined below:
 
-Backend:
+**Backend:**
 *   Flask-based backend
 *   Integration with the [GitHub REST API v3](https://docs.github.com/en/rest) and the [Community Health API](https://docs.github.com/en/rest/metrics/community)
 *  File-based caching to store GitHub API responses for 24 hours.
 
-Frontend:
+**Frontend:**
 *   Bootstrap for responsive CSS styling
 *   Font Awesome for scalable icons
 *   Chart.js for interactive data visualizations
