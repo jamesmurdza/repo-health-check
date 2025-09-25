@@ -111,7 +111,7 @@ body {
     border-radius: 4px;
     border: 1px solid #dee2e6;
     padding: 0.75rem 1rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 .form-control-lg:focus {
@@ -123,7 +123,7 @@ body {
     border-radius: 4px;
     font-weight: 600;
     padding: 0.75rem 2rem;
-    font-size: 1rem;
+    font-size: 0.875rem;
 }
 
 /* Example links */
